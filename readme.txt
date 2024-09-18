@@ -1,3 +1,14 @@
+Step 1: Set Up the GitHub Repository
+Create a new repository on GitHub.
+Add your Python script in this repository.
+
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+Create a workflow with GitHub Actions to run the script twice per day.
+Step 2: Script to Scrape Yad2
+
+
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -55,23 +66,57 @@ def main():
 if __name__ == "__main__":
     main()
 
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+Step 3: Set Up GitHub Actions to Run Twice a Day
+Create a .github/workflows/schedule.yml file in your repository:
+
+name: Scrape Yad2 and Send to Telegram
+
+on:
+  schedule:
+    - cron: '0 9,21 * * *'  # Run at 9 AM and 9 PM UTC
+
+jobs:
+  scrape_and_send:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install selenium
+        pip install webdriver-manager
+        pip install python-telegram-bot
+
+    - name: Run the scraping script
+      run: python script.py
+
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 
-xplanation
-Set Mend User Secrets Step: 
+Step 4: Set Up Telegram Bot
+Create a bot using BotFather on Telegram.
+Get the bot token from BotFather and insert it into the TELEGRAM_BOT_TOKEN variable in the script.
+To get your chat ID, send a message to your bot, and then visit https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates to find your chat ID.
 
-This step uses conditional logic to determine which set of secrets should be used based on the github.actor.
-If the actor is specific-user, it assigns MEND_EMAIL_SPECIFIC_USER and MEND_USER_KEY_SPECIFIC_USER to the environment variables MEND_EMAIL and MEND_USER_KEY.
-Otherwise, it defaults to MEND_EMAIL_DEFAULT and MEND_USER_KEY_DEFAULT.
-Environment Variables: 
-
-After setting the environment variables via $GITHUB_ENV, they are used in the Mend CLI Scan step by referencing ${{ env.MEND_EMAIL }} and ${{ env.MEND_USER_KEY }}.
-Secrets Management:
-
-Make sure to define the four secrets (MEND_EMAIL_SPECIFIC_USER, MEND_USER_KEY_SPECIFIC_USER, MEND_EMAIL_DEFAULT, and MEND_USER_KEY_DEFAULT) in the GitHub repository’s secrets configuration to ensure they are securely stored and available to the workflow.
-Customization:
-
-Replace specific-user with the actual GitHub username of the specific user for whom you want to assign the special secrets. Adjust the secret names accordingly to match what you've set up in your GitHub settings.
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 
 
+Step 5: Optional - Signal Setup
+For Signal, you can use a library like signal-cli to send messages. Here's a basic overview of how that might look:
+
+Install signal-cli and configure it.
+Replace the Telegram messaging part of the script with Signal’s message sending command via a subprocess call.
+Summary
+Python script scrapes Yad2 for listings.
+Script runs twice daily using GitHub Actions.
+Output is sent via Telegram or Signal to your phone.
+Let me know if you need further details, especially on Signal integration!
